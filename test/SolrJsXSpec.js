@@ -92,7 +92,7 @@ describe("SolrJsX:", function () {
     	main.addParameter("q", "*:*");
     	main.addParameter("fq", "field1:value1");
     	main.addParameter("fq", "field2:value2");
-    	main.addParameter("json.nl", "map");  	
+    	main.addParameter("json.nl", "map");
     	expect(main.prepareQuery()).toEqual({ url: "?q=*%3A*&fq=field1%3Avalue1&fq=field2%3Avalue2&json.nl=map" });
     });
     
@@ -125,10 +125,11 @@ describe("SolrJsX:", function () {
     	main.addParameter("fq", "field1:value1");
     	main.addParameter("rows", 20);
     	main.addParameter("json.nl", "map");
+    	main.addParameter("json2tsv", true);
     	
     	var q = main.prepareQuery();
     	
-    	expect(q.url).toBe("?q=f%3Av&json.nl=map");
+    	expect(q.url).toBe("?q=f%3Av&json.nl=map&json2tsv=true");
     	expect(JSON.parse(q.data)).toEqual({ 
       	params: { rows: 20, fq: [ "field1:value1" ] }
       });
@@ -157,6 +158,23 @@ describe("SolrJsX:", function () {
     	
     	var q = main.prepareQuery();
     	expect(q.url).toBe("?q=f%3Av");
+    	expect(JSON.parse(q.data)).toEqual({ 
+      	params: { rows: 20 },
+      	query: [ "field3:value3", "field4:value4" ]
+      });
+    });
+    
+  	it ("Adds a full Json object parameter", function () {
+      var main = new (a$(Solr.Configuring, Solr.QueryingJson))();
+    	main.addParameter("q", "f:v");
+    	main.addParameter("rows", 20);
+    	main.addParameter("json", { 
+        query: ['field3:value3', 'field4:value4']
+      });
+    	main.addParameter("json2tsv", true);
+    	
+    	var q = main.prepareQuery();
+      expect(q.url).toBe("?q=f%3Av&json2tsv=true");
     	expect(JSON.parse(q.data)).toEqual({ 
       	params: { rows: 20 },
       	query: [ "field3:value3", "field4:value4" ]

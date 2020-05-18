@@ -8,12 +8,12 @@
   
 
 var paramIsUrlOnly = function(name) {
-  return name.match(/^(json\.nl|json\.wrf|q|wt|start|json2.+)/);
+  return name.match(/^(json\.nl|json\.wrf|json2.+|q|wt|start)$/);
 };
 
 var paramJsonName = function (name) {
-  var m = name.match(/^json\.?(.*)/);
-  return m && m[1];
+  var m = name.match(/^json(\.|$)(.*)/);
+  return m && m[2];
 };
 
 Solr.QueryingJson = function (settings) {
@@ -55,6 +55,8 @@ Solr.QueryingJson.prototype = {
 
       if (val == undefined)
         return;
+      else if (jname === '')
+        a$.extend(json, val);
       else if (jname !== null)
         a$.path(json, jname, val);
       else
